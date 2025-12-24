@@ -3,11 +3,7 @@ import { isAxiosError } from "axios";
 
 export async function getUser() {
   try {
-    const { data } = await api.get("/user", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("AUTH_TOKEN")}`,
-      },
-    });
+    const { data } = await api.get("/user");
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
