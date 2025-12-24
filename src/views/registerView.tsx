@@ -3,12 +3,20 @@ import { useForm } from "react-hook-form";
 import ErrorMessage from "../componenets/ErrorMessage";
 
 export default function RegisterView() {
+  const initialValues = {
+    name: "",
+    email: "",
+    handle: "",
+    password: "",
+    password_confirmation: "",
+  };
+
   const {
     register,
     watch,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({ defaultValues: initialValues });
 
   const handleRegister = () => {
     console.log(watch());
