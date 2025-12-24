@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import ErrorMessage from "@/componenets/ErrorMessage";
 import type { RegisterUser } from "@/types";
-import axios, { isAxiosError } from "axios";
 import { toast } from "sonner";
+import { api } from "@/config/axios";
+import { isAxiosError } from "axios";
 
 export default function RegisterView() {
   const initialValues: RegisterUser = {
@@ -30,18 +31,12 @@ export default function RegisterView() {
 
   const handleRegister = async (formData: RegisterUser) => {
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}auth/register`,
-        formData
-      );
+      const { data } = await api.post(`auth/register`, formData);
       toast.success(data.message);
       reset();
     } catch (error) {
       if (isAxiosError(error) && error.response) {
-        console.error(
-          "Error en la solicitud de registro:",
-          error.response.data
-        );
+        toast.error(error.response.data.message);
       }
     }
   };
