@@ -16,7 +16,13 @@ export default function RegisterView() {
     watch,
     handleSubmit,
     formState: { errors },
-  } = useForm({ defaultValues: initialValues });
+  } = useForm({
+    defaultValues: initialValues,
+    mode: "onChange",
+    criteriaMode: "all",
+  });
+
+  const password = watch("password");
 
   const handleRegister = () => {
     console.log(watch());
@@ -50,7 +56,13 @@ export default function RegisterView() {
             type="email"
             placeholder="Email de Registro"
             className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
-            {...register("email", { required: "El email es obligatorio" })}
+            {...register("email", {
+              required: "El email es obligatorio",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Formato de email no válido",
+              },
+            })}
           />
           {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
         </div>
@@ -73,6 +85,7 @@ export default function RegisterView() {
           <label htmlFor="password" className="text-2xl text-slate-500">
             Password
           </label>
+
           <input
             id="password"
             type="password"
@@ -87,15 +100,19 @@ export default function RegisterView() {
               validate: {
                 hasSpecialChar: (value) =>
                   /[!@#$%^&*(),.?":{}|<>]/.test(value) ||
-                  "El password debe contener al menos 1 carácter especial",
+                  "Debe contener al menos 1 carácter especial",
                 hasUpperCase: (value) =>
-                  /[A-Z]/.test(value) ||
-                  "El password debe contener al menos 1 mayúscula",
+                  /[A-Z]/.test(value) || "Debe contener al menos 1 mayúscula",
               },
             })}
           />
-          {errors.password && (
-            <ErrorMessage>{errors.password.message}</ErrorMessage>
+
+          {errors.password?.types && (
+            <ul className="space-y-1 text-red-500 text-sm">
+              {Object.values(errors.password.types).map((message, index) => (
+                <li key={index}>• {message}</li>
+              ))}
+            </ul>
           )}
         </div>
 
@@ -113,6 +130,8 @@ export default function RegisterView() {
             className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
             {...register("password_confirmation", {
               required: "Repetir el password es obligatorio",
+              validate: (value) =>
+                value === password || "Las contraseñas no coinciden",
             })}
           />
           {errors.password_confirmation && (
