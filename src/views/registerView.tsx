@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import ErrorMessage from "../componenets/ErrorMessage";
 import type { RegisterUser } from "../types";
+import axios from "axios";
 
 export default function RegisterView() {
   const initialValues: RegisterUser = {
@@ -25,8 +26,16 @@ export default function RegisterView() {
 
   const password = watch("password");
 
-  const handleRegister = (formData: RegisterUser) => {
-    console.log(formData);
+  const handleRegister = async (formData: RegisterUser) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/auth/register",
+        formData
+      );
+      console.log("Usuario registrado con éxito:", response.data);
+    } catch (error) {
+      console.error("Error al registrar el usuario:", error);
+    }
   };
   return (
     <>
