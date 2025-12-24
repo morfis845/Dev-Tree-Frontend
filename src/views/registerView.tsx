@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import ErrorMessage from "../componenets/ErrorMessage";
-import type { RegisterUser } from "../types";
+import ErrorMessage from "@/componenets/ErrorMessage";
+import type { RegisterUser } from "@/types";
 import axios, { isAxiosError } from "axios";
+import { toast } from "sonner";
 
 export default function RegisterView() {
   const initialValues: RegisterUser = {
@@ -16,6 +17,7 @@ export default function RegisterView() {
   const {
     register,
     watch,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterUser>({
@@ -32,7 +34,8 @@ export default function RegisterView() {
         `${import.meta.env.VITE_BACKEND_URL}auth/register`,
         formData
       );
-      console.log("Usuario registrado con éxito:", data);
+      toast.success(data.message);
+      reset();
     } catch (error) {
       if (isAxiosError(error) && error.response) {
         console.error(
