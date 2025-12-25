@@ -1,6 +1,6 @@
 import DevTreeInput from "@/components/DevTreeInput";
 import { social } from "../data/social";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { isValidUrl } from "@/utils";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -12,6 +12,16 @@ export default function LinkTreeView() {
   const queryClient = useQueryClient();
   const data: User = queryClient.getQueryData(["getUser"])!;
 
+  const resetQuery = (updatedLinks: typeof devTreeLinks) => {
+    setDevTreeLinks(updatedLinks);
+    queryClient.setQueryData(["getUser"], (oldData: User) => {
+      return {
+        ...oldData,
+        links: JSON.stringify(updatedLinks),
+      };
+    });
+  };
+
   const { mutate } = useMutation({
     mutationFn: updateUser,
     onError: (error) => {
@@ -21,6 +31,24 @@ export default function LinkTreeView() {
       toast.success("Actualizado correctamente");
     },
   });
+
+  useEffect(() => {
+    const updatedData = devTreeLinks.map((link) => {
+      const userLinks = JSON.parse(data.links);
+      const userLink = userLinks.find(
+        (uLink: { name: string }) => uLink.name === link.name
+      );
+      if (userLink) {
+        return {
+          ...link,
+          url: userLink.url,
+          enabled: userLink.enabled,
+        };
+      }
+      return link;
+    });
+    setDevTreeLinks(updatedData);
+  }, []);
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -38,28 +66,21 @@ export default function LinkTreeView() {
     });
 
     setDevTreeLinks(updatedLinks);
-    queryClient.setQueryData(["getUser"], (oldData: User) => {
-      return {
-        ...oldData,
-        links: JSON.stringify(updatedLinks),
-      };
-    });
+    resetQuery(updatedLinks);
   };
 
-  const handleEnableToggle = (e: boolean, name: string) => {
+  const handleEnableToggle = (name: string) => {
     const updatedLinks = devTreeLinks.map((link) => {
-      if (link.enabled !== e && link.name === name) {
-        if (isValidUrl(link.url) || !e) {
-          return { ...link, enabled: e };
-        } else {
-          toast.error(
-            "Por favor ingresa una URL válida antes de habilitar el enlace."
-          );
+      if (link.name === name) {
+        if (!isValidUrl(link.url)) {
+          toast.error("Por favor ingresa una URL válida antes de activar.");
+          return link;
         }
+        return { ...link, enabled: !link.enabled };
       }
       return link;
     });
-    setDevTreeLinks(updatedLinks);
+    resetQuery(updatedLinks);
   };
 
   return (

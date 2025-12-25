@@ -1,5 +1,5 @@
 import { api } from "@/config/axios";
-import type { ProfileUpdate, User } from "@/types";
+import type { User } from "@/types";
 import { isAxiosError } from "axios";
 
 export async function getUser() {
