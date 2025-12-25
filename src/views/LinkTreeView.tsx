@@ -5,7 +5,7 @@ import { isValidUrl } from "@/utils";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateUser } from "@/api/DevTreeApi";
-import type { User } from "@/types";
+import type { SocialLink, User } from "@/types";
 
 export default function LinkTreeView() {
   const [devTreeLinks, setDevTreeLinks] = useState(social);
@@ -36,7 +36,7 @@ export default function LinkTreeView() {
     const updatedData = devTreeLinks.map((link) => {
       const userLinks = JSON.parse(data.links);
       const userLink = userLinks.find(
-        (uLink: { name: string }) => uLink.name === link.name
+        (uLink: SocialLink) => uLink.name === link.name
       );
       if (userLink) {
         return {

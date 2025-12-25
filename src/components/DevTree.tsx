@@ -1,12 +1,16 @@
 import { Link, Outlet } from "react-router-dom";
 import NavigationTabs from "./NavigationsTabs";
 import { Toaster } from "sonner";
+import type { SocialLink } from "@/types";
+import { Icon } from "../../public/SocialIcons/Icon";
+import type { IconName } from "../../public/SocialIcons/icons";
 
 type DevTreeProps = {
   data: {
     handle: string;
     image: string;
     description: string;
+    links: string;
   };
 };
 
@@ -53,9 +57,35 @@ export default function DevTree({ data }: DevTreeProps) {
                   className="mx-auto max-w-62.5"
                 />
               )}
-              <p className="text-center text-lg font-black text-white">
+              <p className="text-center text-lg font-black text-white flex">
                 {data.description}
               </p>
+              {JSON.parse(data.links).map(
+                (link: SocialLink) =>
+                  link.enabled && (
+                    <div key={link.name}>
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        className="bg-gray-700 p-3 hover:bg-gray-600 roundede-lg flex items-center gap-4 group text-white font-bold text-xl"
+                      >
+                        {/* Icono: ancho fijo */}
+                        <span className="w-8 h-8 flex items-center justify-center">
+                          <Icon
+                            name={link.name as IconName}
+                            className="text-white group-hover:scale-110 transition-transform"
+                            size={24}
+                          />
+                        </span>
+
+                        {/* Texto */}
+                        <span className="group-hover:underline">
+                          {link.name}
+                        </span>
+                      </a>
+                    </div>
+                  )
+              )}
             </div>
           </div>
         </main>
