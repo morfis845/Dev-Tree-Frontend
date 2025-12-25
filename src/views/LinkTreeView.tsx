@@ -6,7 +6,13 @@ export default function LinkTreeView() {
   const [devTreeLinks, setDevTreeLinks] = useState(social);
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.name, e.target.value);
+    const updatedLinks = devTreeLinks.map((link) => {
+      if (link.name === e.target.name) {
+        return { ...link, url: e.target.value };
+      }
+      return link;
+    });
+    setDevTreeLinks(updatedLinks);
   };
 
   return (
