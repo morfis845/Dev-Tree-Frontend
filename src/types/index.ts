@@ -16,3 +16,12 @@ export type LoginUser = Pick<User, "email"> & {
 };
 
 export type ProfileUpdate = Pick<User, "handle" | "description">;
+
+export type SocialLink = {
+  id: number;
+  name: string;
+  url: string;
+  enabled: boolean;
+};
+
+export type DevTreeLink = Pick<SocialLink, "name" | "url" | "enabled">;
