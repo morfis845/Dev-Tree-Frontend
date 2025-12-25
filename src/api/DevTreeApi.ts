@@ -23,7 +23,7 @@ interface UploadImageResponse {
   image: string;
 }
 
-export async function updateUser(formData: ProfileUpdate) {
+export async function updateUser(formData: User) {
   try {
     const response = await api.patch<UpdateUserResponse>("/user", formData);
     return response.data;

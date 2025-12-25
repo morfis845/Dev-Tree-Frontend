@@ -3,9 +3,24 @@ import { social } from "../data/social";
 import { useState } from "react";
 import { isValidUrl } from "@/utils";
 import { toast } from "sonner";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateUser } from "@/api/DevTreeApi";
+import type { User } from "@/types";
 
 export default function LinkTreeView() {
   const [devTreeLinks, setDevTreeLinks] = useState(social);
+  const queryClient = useQueryClient();
+  const data: User = queryClient.getQueryData(["getUser"])!;
+
+  const { mutate } = useMutation({
+    mutationFn: updateUser,
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: () => {
+      toast.success("Actualizado correctamente");
+    },
+  });
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -23,6 +38,12 @@ export default function LinkTreeView() {
     });
 
     setDevTreeLinks(updatedLinks);
+    queryClient.setQueryData(["getUser"], (oldData: User) => {
+      return {
+        ...oldData,
+        links: JSON.stringify(updatedLinks),
+      };
+    });
   };
 
   const handleEnableToggle = (e: boolean, name: string) => {
@@ -53,6 +74,13 @@ export default function LinkTreeView() {
             name={link.name}
           />
         ))}
+
+        <button
+          onClick={() => mutate(data)}
+          className="bg-cyan-400 p-2 text-lg w-full uppercase text-slate-600 rounded-lg font-bold cursor-pointer"
+        >
+          Guardar Cambios
+        </button>
       </div>
     </>
   );
