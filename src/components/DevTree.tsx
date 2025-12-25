@@ -5,6 +5,7 @@ import { Toaster } from "sonner";
 type DevTreeProps = {
   data: {
     handle: string;
+    image: string;
   };
 };
 
@@ -42,7 +43,9 @@ export default function DevTree({ data }: DevTreeProps) {
             <div className="flex-1 ">
               <Outlet />
             </div>
-            <div className="w-full md:w-96 bg-slate-800 px-5 py-10 space-y-6"></div>
+            <div className="w-full md:w-96 bg-slate-800 px-5 py-10 space-y-6">
+              <img src={data.image} alt="" />
+            </div>
           </div>
         </main>
       </div>
