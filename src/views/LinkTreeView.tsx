@@ -15,6 +15,16 @@ export default function LinkTreeView() {
     setDevTreeLinks(updatedLinks);
   };
 
+  const handleEnableToggle = (e: boolean, name: string) => {
+    const updatedLinks = devTreeLinks.map((link) => {
+      if (link.enabled !== e && link.name === name) {
+        return { ...link, enabled: e };
+      }
+      return link;
+    });
+    setDevTreeLinks(updatedLinks);
+  };
+
   return (
     <>
       <div className="flex flex-1 flex-col gap-5">
@@ -23,6 +33,7 @@ export default function LinkTreeView() {
             key={link.name}
             link={link}
             handleUrlChange={handleUrlChange}
+            handleEnableToggle={handleEnableToggle}
             name={link.name}
           />
         ))}
