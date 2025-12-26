@@ -21,7 +21,7 @@ export default function DevTreeInput({
       <Icon name={link.name as keyof typeof Icon} size={32} />
       <input
         type="text"
-        className="flex-1 border border-gray-300 rounded-lg px-3"
+        className="w-10 md:w-full flex-1 border border-gray-300 rounded-lg px-3"
         value={link.url}
         onChange={handleUrlChange}
         name={name}

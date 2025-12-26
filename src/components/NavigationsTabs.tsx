@@ -21,9 +21,7 @@ export default function NavigationTabs() {
   return (
     <div className="mb-5">
       <div className="sm:hidden">
-        <label htmlFor="tabs" className="sr-only">
-          Select a tab
-        </label>
+        <label className="sr-only">Select a tab</label>
         <select
           id="tabs"
           name="tabs"

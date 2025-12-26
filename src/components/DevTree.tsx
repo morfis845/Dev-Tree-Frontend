@@ -13,7 +13,7 @@ export default function DevTree({ data }: DevTreeProps) {
   return (
     <>
       <header className="bg-slate-800 py-5">
-        <div className="mx-auto max-w-5xl flex flex-col md:flex-row items-center md:justify-between">
+        <div className="mx-auto max-w-5xl flex flex-col md:flex-row items-center md:justify-between md:px-5">
           <div className="w-full p-5 lg:p-0 md:w-1/3">
             <img src="/logo.svg" className="w-full block" />
           </div>
@@ -28,7 +28,7 @@ export default function DevTree({ data }: DevTreeProps) {
         </div>
       </header>
       <div className="bg-gray-100  min-h-screen py-10">
-        <main className="mx-auto max-w-5xl p-10 md:p-0">
+        <main className="mx-auto max-w-5xl p-10">
           <NavigationTabs />
           <div className="flex justify-end">
             <Link
@@ -43,13 +43,13 @@ export default function DevTree({ data }: DevTreeProps) {
             <div className="flex-1 ">
               <Outlet />
             </div>
-            <div className="w-full md:w-96 bg-slate-800 px-5 py-10 space-y-6">
+            <div className="w-full md:w-96 bg-slate-800 py-10 space-y-6">
               <p className="text-4xl text-center text-white">{data.handle}</p>
               {data.image && (
                 <img
                   src={data.image}
                   alt="imagen de perfil"
-                  className="mx-auto max-w-62.5"
+                  className="w-full h-64 object-cover overflow-hidden mask-b-from-70% mask-b-to-100%"
                 />
               )}
               <p className="justify-center text-lg font-black text-white flex">
@@ -62,7 +62,7 @@ export default function DevTree({ data }: DevTreeProps) {
                       <a
                         href={link.url}
                         target="_blank"
-                        className="bg-gray-700 p-3 hover:bg-gray-600 roundede-lg flex items-center gap-4 group text-white font-bold text-xl"
+                        className="bg-gray-700 p-3 hover:bg-gray-600 roundede-lg flex items-center gap-4 group text-white font-bold text-xl mx-10"
                       >
                         {/* Icono: ancho fijo */}
                         <span className="w-8 h-8 flex items-center justify-center">

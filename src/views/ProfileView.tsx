@@ -73,6 +73,7 @@ export default function ProfileView() {
       <div className="grid grid-cols-1 gap-2">
         <label htmlFor="handle">Handle:</label>
         <input
+          id="handle"
           type="text"
           className="border-none bg-slate-100 rounded-lg p-2"
           placeholder="handle o Nombre de Usuario"
@@ -85,17 +86,18 @@ export default function ProfileView() {
       <div className="grid grid-cols-1 gap-2">
         <label htmlFor="description">Descripción:</label>
         <textarea
+          id="description"
           className="border-none bg-slate-100 rounded-lg p-2"
           placeholder="Tu Descripción"
           {...register("description")}
         />
       </div>
       <div className="grid grid-cols-1 gap-2">
-        <label htmlFor="handle">Imagen:</label>
+        <label htmlFor="image">Imagen:</label>
         <input
           id="image"
           type="file"
-          name="handle"
+          name="image"
           className="border-none bg-slate-100 rounded-lg p-2"
           accept="image/*"
           onChange={handleChange}
