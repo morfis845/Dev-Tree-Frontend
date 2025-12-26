@@ -1,73 +1,140 @@
-# React + TypeScript + Vite
+# DevTree — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Una interfaz moderna y rápida para gestionar tu perfil y árbol de enlaces. Construida con React + Vite, Tailwind CSS y TanStack Query, enfocada en una gran experiencia de desarrollo y rendimiento en producción.
 
-Currently, two official plugins are available:
+## Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Perfil editable: handle, descripción e imagen de perfil.
+- Árbol de enlaces sociales con íconos y estados habilitado/deshabilitado.
+- Autenticación con token: inyección automática en peticiones (Authorization: Bearer).
+- Subida de imágenes con feedback (toasts con Sonner).
+- Caché y refetch inteligentes con TanStack Query.
+- Enrutamiento con React Router y layouts para áreas públicas/privadas.
 
-## React Compiler
+## Stack Tecnológico
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+- React 19 + Vite 7 (plugin react-swc)
+- TypeScript 5
+- Tailwind CSS 4 + @tailwindcss/vite
+- TanStack React Query 5
+- React Hook Form
+- Axios + interceptores
+- Sonner (notificaciones)
 
-## Expanding the ESLint configuration
+## Requisitos
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js >= 18
+- npm, pnpm o yarn (cualquiera)
+- Backend operativo y accesible (ver variable VITE_BACKEND_URL)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Inicio Rápido
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+```bash
+# 1) Instalar dependencias
+cd Frontend
+npm install
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# 2) Configurar variables de entorno
+# Crea .env en la carpeta Frontend y apunta al backend
+
+# 3) Levantar entorno de desarrollo
+npm run dev
+
+# 4) Lint (opcional)
+npm run lint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Variables de Entorno
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Crea un archivo `.env` en `Frontend/` con:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+VITE_BACKEND_URL=http://localhost:4000
 ```
+
+- `VITE_BACKEND_URL`: URL base del backend. Se usa en `src/config/axios.ts`.
+- El token de sesión se guarda en `localStorage` bajo la clave `AUTH_TOKEN` y se añade automáticamente a cada request.
+
+## Scripts
+
+- `dev`: arranca el servidor de desarrollo de Vite.
+- `build`: compila TypeScript y genera el build de producción.
+- `preview`: sirve el build para verificación local.
+- `lint`: ejecuta ESLint.
+
+## Estructura de Carpetas (resumen)
+
+- `src/`
+  - `views/`: pantallas principales (Login, Register, Profile, LinkTree).
+  - `layouts/`: AppLayout (área autenticada) y AuthLayout.
+  - `components/`: UI reutilizable, DevTree, inputs, tabs, etc.
+  - `api/`: cliente de API (DevTreeApi.ts).
+  - `config/`: configuración de Axios y alias.
+  - `types/`: tipos User, ProfileUpdate, etc.
+  - `utils/`: utilidades.
+- `public/SocialIcons/`: íconos y componente Icon.
+- `vite.config.ts`: configuración de Vite con alias @ → src.
+
+## Flujo de Datos Clave
+
+- Obtención del usuario:
+  - AppLayout ejecuta useQuery({ queryKey: ["getUser"], queryFn: getUser }).
+  - Renderiza DevTree con `data` del usuario.
+- Actualización de perfil:
+  - ProfileView envía cambios vía updateUserMutation.
+  - En onSuccess, el caché se actualiza con queryClient.setQueryData(["getUser"], data.user) para refrescar la vista al instante.
+- Subida de imagen:
+  - uploadImageMutation actualiza `image` en el caché de `getUser` para un update inmediato.
+
+## Integración con Backend
+
+- Endpoints usados (referencia):
+  - GET /user → datos del perfil.
+  - PATCH /user → actualización de perfil.
+  - POST /user/image → subida de imagen.
+- El Authorization se añade desde el interceptor en `src/config/axios.ts` si `AUTH_TOKEN` existe en `localStorage`.
+
+## Estilos y UI
+
+- Tailwind CSS 4 para estilos utilitarios.
+- Íconos en `public/SocialIcons` con `IconName` tipado.
+- Sonner para toasts (Toaster ya configurado en DevTree).
+
+## Calidad y Mantenimiento
+
+- ESLint con reglas para React, hooks y TypeScript.
+- Alias `@` para imports limpios.
+- Tipado consistente usando los modelos de `src/types`.
+
+## Build y Deploy
+
+```bash
+# Construir producción
+npm run build
+
+# Previsualizar build
+npm run preview
+```
+
+- Sirve el contenido generado por Vite en cualquier hosting estático.
+- Recuerda configurar `VITE_BACKEND_URL` en el entorno del hosting.
+
+## Resolución de Problemas
+
+- La vista no actualiza el handle tras guardar:
+  - Verifica que ProfileView usa `queryClient.setQueryData(["getUser"], data.user)` en `onSuccess`.
+  - Asegura que AppLayout consume `getUser` y renderiza `<DevTree data={data} />`.
+- Errores de CORS o 401:
+  - Revisa `VITE_BACKEND_URL` y el token en `localStorage`.
+- Alias `@` no resuelve:
+  - Confirma `vite.config.ts` y que ejecutas scripts desde la carpeta Frontend.
+
+## Roadmap (ideas)
+
+- Edición y orden drag & drop de enlaces.
+- Temas (dark/light) y personalización avanzada.
+- Preview pública del perfil con URL compartible.
+
+---
+
+Hecho con ❤️ para desarrolladores que valoran velocidad y simplicidad.
