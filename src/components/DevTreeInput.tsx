@@ -1,6 +1,7 @@
 import type { DevTreeLink } from "@/types";
 import { classNames } from "@/utils/index";
 import { Switch } from "@headlessui/react";
+import { Icon } from "../../public/SocialIcons/Icon";
 
 type LinkProps = {
   link: DevTreeLink;
@@ -17,13 +18,10 @@ export default function DevTreeInput({
 }: LinkProps) {
   return (
     <div className="bg-white shadow-sm p-5 flex items-center gap-5">
-      <div
-        className="w-12 h-12 bg-cover"
-        style={{ backgroundImage: `url(/social/icon_${link.name}.svg)` }}
-      ></div>
+      <Icon name={link.name as keyof typeof Icon} size={32} />
       <input
         type="text"
-        className="flex-1 border border-gray-300 rounded-lg"
+        className="flex-1 border border-gray-300 rounded-lg px-3"
         value={link.url}
         onChange={handleUrlChange}
         name={name}

@@ -28,7 +28,7 @@ export default function ProfileView() {
     },
     onSuccess: (data) => {
       toast.success(data.message);
-      queryClient.invalidateQueries({ queryKey: ["getUser"] });
+      queryClient.setQueryData(["getUser"], data.user);
     },
   });
 
@@ -56,9 +56,11 @@ export default function ProfileView() {
 
   const handleUserProfileForm = (formData: ProfileUpdate) => {
     const user = queryClient.getQueryData(["getUser"]) as User;
-    user.description = formData.description || "";
-    user.handle = formData.handle;
-    updateUserMutation.mutate(user);
+    updateUserMutation.mutate({
+      ...user,
+      description: formData.description || "",
+      handle: formData.handle,
+    });
   };
   return (
     <form

@@ -1,17 +1,12 @@
 import { Link, Outlet } from "react-router-dom";
 import NavigationTabs from "./NavigationsTabs";
 import { Toaster } from "sonner";
-import type { SocialLink } from "@/types";
+import type { SocialLink, User } from "@/types";
 import { Icon } from "../../public/SocialIcons/Icon";
 import type { IconName } from "../../public/SocialIcons/icons";
 
 type DevTreeProps = {
-  data: {
-    handle: string;
-    image: string;
-    description: string;
-    links: string;
-  };
+  data: User;
 };
 
 export default function DevTree({ data }: DevTreeProps) {
@@ -57,7 +52,7 @@ export default function DevTree({ data }: DevTreeProps) {
                   className="mx-auto max-w-62.5"
                 />
               )}
-              <p className="text-center text-lg font-black text-white flex">
+              <p className="justify-center text-lg font-black text-white flex">
                 {data.description}
               </p>
               {JSON.parse(data.links).map(

@@ -16,5 +16,5 @@ export default function AppLayout() {
     return <Navigate to={"/auth/login"} replace={true} />;
   }
 
-  if (data) return <DevTree data={data} />;
+  return data ? <DevTree data={data} /> : null;
 }
