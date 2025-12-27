@@ -157,7 +157,6 @@ export default function LinkTreeView() {
       );
 
       const i = queryClient.getQueryData<User>(["getUser"]);
-      console.log("Usuario al cambiar URL:", i);
       return nextLinks;
     });
   };
@@ -211,10 +210,8 @@ export default function LinkTreeView() {
     }
 
     if (!hasValidUrls(devTreeLinks)) return;
-    console.log(devTreeLinks);
 
     const i = queryClient.getQueryData<User>(["getUser"]);
-    console.log("Usuario al guardar:", i);
 
     mutate({
       ...data,

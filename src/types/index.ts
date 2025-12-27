@@ -16,6 +16,11 @@ export type LoginUser = Pick<User, "email"> & {
   password: string;
 };
 
+export type UserHandle = Pick<
+  User,
+  "handle" | "name" | "image" | "description" | "links"
+>;
+
 export type ProfileUpdate = Pick<User, "handle" | "description">;
 
 export type SocialLink = {

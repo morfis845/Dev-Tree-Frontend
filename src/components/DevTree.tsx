@@ -12,7 +12,7 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { updateUser } from "@/api/DevTreeApi";
 import { toast } from "sonner";
@@ -65,8 +65,6 @@ export default function DevTree({ data }: DevTreeProps) {
     // Crea el nuevo arreglo: habilitados en nuevo orden + deshabilitados al final
     const disabledLinks = allLinks.filter((link) => !link.enabled);
     const reorderedLinks = [...reorderedEnabled, ...disabledLinks];
-
-    console.log("Links reordenados:", reorderedLinks);
 
     // Actualiza React Query inmediatamente
     const linksString = JSON.stringify(reorderedLinks);

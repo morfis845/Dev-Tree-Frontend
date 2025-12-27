@@ -3,6 +3,18 @@
 
 @custom-variant dark (&:is(.dark *));
 
+:hover.neon {
+  box-shadow: 0 0 20px #ea77e47e, 0 0 20px #ea77e47e, 0 0 20px #ea77e47e,
+    0 0 20px #ea77e47e;
+  background-color: #e98fe4;
+  scale: 1.1;
+  transition: all 0.2s ease-in-out;
+}
+
+.color {
+  color: #e98fe4;
+}
+
 @theme {
   --color-facebook-v: #1877f2;
   --color-x-v: #000000;
@@ -13,6 +25,11 @@
   --color-reddit-v: #ff4500;
   --color-twitch-v: #9146ff;
   --color-discord-v: #5865f2;
+
+  --color-stroke-color: #f5e1f5;
+  --color-back-color: #e98fe4;
+  --color-back-color-gradient: bg-linear-to-r from-purple-400 via-pink-500
+    to-red-500;
 }
 
 @theme inline {
