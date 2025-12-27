@@ -156,7 +156,6 @@ export default function LinkTreeView() {
           : oldData
       );
 
-      const i = queryClient.getQueryData<User>(["getUser"]);
       return nextLinks;
     });
   };
