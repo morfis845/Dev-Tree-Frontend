@@ -85,16 +85,29 @@ export default function LinkTreeView() {
         };
       });
 
+      const selectedLink = nextLinks.find((linkv) => linkv.name === name);
+      const linksSaved: SocialLink[] = JSON.parse(data.links);
+      let updatedItem: SocialLink[] = [];
+      if (selectedLink) {
+        const newItem = {
+          ...selectedLink,
+          id: linksSaved.length + 1,
+        };
+        updatedItem = [...linksSaved, newItem];
+      }
+
       // Actualiza el preview (ProfileView/DevTree) inmediatamente
       queryClient.setQueryData(["getUser"], (oldData: User | undefined) =>
         oldData
           ? {
               ...oldData,
-              links: JSON.stringify(nextLinks),
+              links: JSON.stringify(updatedItem),
             }
           : oldData
       );
 
+      const i = queryClient.getQueryData<User>(["getUser"]);
+      console.log("Usuario al cambiar URL:", i);
       return nextLinks;
     });
   };
@@ -114,12 +127,31 @@ export default function LinkTreeView() {
         return link;
       });
 
+      // Actualiza solo el `enabled` del link dentro de `data.links`,
+      // conservando el resto de información intacta.
+      const selectedLink = nextLinks.find((linkv) => linkv.name === name);
+      const linksSaved: SocialLink[] = JSON.parse(data.links);
+      let updatedLinks: SocialLink[] = linksSaved;
+      if (selectedLink) {
+        updatedLinks = linksSaved.map((l) =>
+          l.name === selectedLink.name
+            ? { ...l, enabled: selectedLink.enabled }
+            : l
+        );
+        console.log(
+          "Toggle aplicado:",
+          selectedLink.name,
+          "=>",
+          selectedLink.enabled
+        );
+      }
+
       // Refleja de inmediato el toggle en el preview
       queryClient.setQueryData(["getUser"], (oldData: User | undefined) =>
         oldData
           ? {
               ...oldData,
-              links: JSON.stringify(nextLinks),
+              links: JSON.stringify(updatedLinks),
             }
           : oldData
       );
@@ -135,10 +167,14 @@ export default function LinkTreeView() {
     }
 
     if (!hasValidUrls(devTreeLinks)) return;
+    console.log(devTreeLinks);
+
+    const i = queryClient.getQueryData<User>(["getUser"]);
+    console.log("Usuario al guardar:", i);
 
     mutate({
       ...data,
-      links: JSON.stringify(devTreeLinks),
+      links: i!.links,
     });
   };
 
