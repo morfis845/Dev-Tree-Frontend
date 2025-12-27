@@ -23,7 +23,6 @@ type DevTreeProps = {
 
 export default function DevTree({ data }: DevTreeProps) {
   const [enabledLinks, setEnabledLinks] = useState<SocialLink[]>([]);
-  const draggedRef = useRef(false);
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
