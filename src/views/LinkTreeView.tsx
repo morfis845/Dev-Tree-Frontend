@@ -20,7 +20,9 @@ export default function LinkTreeView() {
     );
 
     if (invalidLink) {
-      toast.error(`La URL de ${invalidLink.name} no es válida.`);
+      toast.error(`La URL de ${invalidLink.name} no es válida.`, {
+        id: `invalid-url-${invalidLink.name}`,
+      });
       return false;
     }
 
@@ -30,10 +32,12 @@ export default function LinkTreeView() {
   const { mutate } = useMutation({
     mutationFn: updateUser,
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message, { id: "update-error" });
     },
     onSuccess: (response) => {
-      toast.success(response.message ?? "Actualizado correctamente");
+      toast.success(response.message ?? "Actualizado correctamente", {
+        id: "update-success",
+      });
 
       if (response.user) {
         setInitialLinks(JSON.parse(response.user.links));
@@ -68,8 +72,8 @@ export default function LinkTreeView() {
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    setDevTreeLinks((prevLinks) =>
-      prevLinks.map((link) => {
+    setDevTreeLinks((prevLinks) => {
+      const nextLinks = prevLinks.map((link) => {
         if (link.name !== name) return link;
 
         const isValid = isValidUrl(value);
@@ -79,23 +83,49 @@ export default function LinkTreeView() {
           url: value,
           enabled: isValid ? link.enabled : false, // 🔑 si deja de ser válida, se desactiva
         };
-      })
-    );
+      });
+
+      // Actualiza el preview (ProfileView/DevTree) inmediatamente
+      queryClient.setQueryData(["getUser"], (oldData: User | undefined) =>
+        oldData
+          ? {
+              ...oldData,
+              links: JSON.stringify(nextLinks),
+            }
+          : oldData
+      );
+
+      return nextLinks;
+    });
   };
 
   const handleEnableToggle = (name: string) => {
-    setDevTreeLinks((prevLinks) =>
-      prevLinks.map((link) => {
+    setDevTreeLinks((prevLinks) => {
+      const nextLinks = prevLinks.map((link) => {
         if (link.name === name) {
           if (!isValidUrl(link.url)) {
-            toast.error("Por favor ingresa una URL válida antes de activar.");
+            toast.error("Por favor ingresa una URL válida antes de activar.", {
+              id: `invalid-url-toggle-${name}`,
+            });
             return link;
           }
           return { ...link, enabled: !link.enabled };
         }
         return link;
-      })
-    );
+      });
+
+      // Refleja de inmediato el toggle en el preview
+      queryClient.setQueryData(["getUser"], (oldData: User | undefined) =>
+        oldData
+          ? {
+              ...oldData,
+              links: JSON.stringify(nextLinks),
+            }
+          : oldData
+      );
+
+      return nextLinks;
+    });
   };
 
   const handleSave = () => {

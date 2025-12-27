@@ -1,6 +1,5 @@
 import { Link, Outlet } from "react-router-dom";
 import NavigationTabs from "./NavigationsTabs";
-import { Toaster } from "sonner";
 import type { SocialLink, User } from "@/types";
 import { Icon } from "../../public/SocialIcons/Icon";
 import type { IconName } from "../../public/SocialIcons/icons";
@@ -68,8 +67,9 @@ export default function DevTree({ data }: DevTreeProps) {
                         <span className="w-8 h-8 flex items-center justify-center">
                           <Icon
                             name={link.name as IconName}
-                            className="text-white group-hover:scale-110 transition-transform"
+                            className="group-hover:scale-110 transition-transform"
                             size={24}
+                            color="#ffffff"
                           />
                         </span>
 
@@ -85,7 +85,6 @@ export default function DevTree({ data }: DevTreeProps) {
           </div>
         </main>
       </div>
-      <Toaster position="top-right" />
     </>
   );
 }

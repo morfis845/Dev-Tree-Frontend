@@ -3,6 +3,18 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --color-facebook-v: #1877f2;
+  --color-x-v: #000000;
+  --color-linkedin-v: #0a66c2;
+  --color-github-v: #181717;
+  --color-instagram-v: #e4405f;
+  --color-youtube-v: #ff0000;
+  --color-reddit-v: #ff4500;
+  --color-twitch-v: #9146ff;
+  --color-discord-v: #5865f2;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
