@@ -9,17 +9,22 @@ import type { SocialLink, User } from "@/types";
 
 export default function LinkTreeView() {
   const [devTreeLinks, setDevTreeLinks] = useState(social);
+  const [initialLinks, setInitialLinks] = useState(social);
+
   const queryClient = useQueryClient();
   const data: User = queryClient.getQueryData(["getUser"])!;
 
-  const resetQuery = (updatedLinks: typeof devTreeLinks) => {
-    setDevTreeLinks(updatedLinks);
-    queryClient.setQueryData(["getUser"], (oldData: User) => {
-      return {
-        ...oldData,
-        links: JSON.stringify(updatedLinks),
-      };
-    });
+  const hasValidUrls = (links: typeof devTreeLinks) => {
+    const invalidLink = links.find(
+      (link) => link.url !== "" && !isValidUrl(link.url)
+    );
+
+    if (invalidLink) {
+      toast.error(`La URL de ${invalidLink.name} no es válida.`);
+      return false;
+    }
+
+    return true;
   };
 
   const { mutate } = useMutation({
@@ -27,8 +32,13 @@ export default function LinkTreeView() {
     onError: (error) => {
       toast.error(error.message);
     },
-    onSuccess: () => {
-      toast.success("Actualizado correctamente");
+    onSuccess: (response) => {
+      toast.success(response.message ?? "Actualizado correctamente");
+
+      if (response.user) {
+        setInitialLinks(JSON.parse(response.user.links));
+        queryClient.setQueryData(["getUser"], response.user);
+      }
     },
   });
 
@@ -48,39 +58,58 @@ export default function LinkTreeView() {
       return link;
     });
     setDevTreeLinks(updatedData);
+    setInitialLinks(updatedData);
   }, []);
+
+  const hasChanges = () => {
+    return JSON.stringify(devTreeLinks) !== JSON.stringify(initialLinks);
+  };
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    const updatedLinks = devTreeLinks.map((link) => {
-      if (link.name !== name) return link;
+    setDevTreeLinks((prevLinks) =>
+      prevLinks.map((link) => {
+        if (link.name !== name) return link;
 
-      const isValid = isValidUrl(value);
+        const isValid = isValidUrl(value);
 
-      return {
-        ...link,
-        url: value,
-        enabled: isValid ? link.enabled : false, // 🔑 si deja de ser válida, se desactiva
-      };
-    });
-
-    setDevTreeLinks(updatedLinks);
-    resetQuery(updatedLinks);
+        return {
+          ...link,
+          url: value,
+          enabled: isValid ? link.enabled : false, // 🔑 si deja de ser válida, se desactiva
+        };
+      })
+    );
   };
 
   const handleEnableToggle = (name: string) => {
-    const updatedLinks = devTreeLinks.map((link) => {
-      if (link.name === name) {
-        if (!isValidUrl(link.url)) {
-          toast.error("Por favor ingresa una URL válida antes de activar.");
-          return link;
+    setDevTreeLinks((prevLinks) =>
+      prevLinks.map((link) => {
+        if (link.name === name) {
+          if (!isValidUrl(link.url)) {
+            toast.error("Por favor ingresa una URL válida antes de activar.");
+            return link;
+          }
+          return { ...link, enabled: !link.enabled };
         }
-        return { ...link, enabled: !link.enabled };
-      }
-      return link;
+        return link;
+      })
+    );
+  };
+
+  const handleSave = () => {
+    if (!hasChanges()) {
+      toast.error("No hay cambios para guardar.");
+      return;
+    }
+
+    if (!hasValidUrls(devTreeLinks)) return;
+
+    mutate({
+      ...data,
+      links: JSON.stringify(devTreeLinks),
     });
-    resetQuery(updatedLinks);
   };
 
   return (
@@ -97,7 +126,7 @@ export default function LinkTreeView() {
         ))}
 
         <button
-          onClick={() => mutate(data)}
+          onClick={handleSave}
           className="bg-cyan-400 p-2 text-lg w-full uppercase text-slate-600 rounded-lg font-bold cursor-pointer"
         >
           Guardar Cambios
