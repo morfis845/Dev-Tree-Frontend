@@ -85,15 +85,65 @@ export default function LinkTreeView() {
         };
       });
 
+      // Sincroniza `data.links`:
+      // - Si la URL se vacía, elimina el registro del arreglo guardado
+      // - Si es válida, actualiza o crea el registro sin duplicar
       const selectedLink = nextLinks.find((linkv) => linkv.name === name);
       const linksSaved: SocialLink[] = JSON.parse(data.links);
-      let updatedItem: SocialLink[] = [];
+      let updatedLinks: SocialLink[] = linksSaved;
+
       if (selectedLink) {
-        const newItem = {
-          ...selectedLink,
-          id: linksSaved.length + 1,
-        };
-        updatedItem = [...linksSaved, newItem];
+        const trimmed = selectedLink.url.trim();
+        const exists = linksSaved.find((l) => l.name === selectedLink.name);
+
+        if (trimmed === "") {
+          // Eliminar del arreglo cuando el usuario borra la URL
+          updatedLinks = linksSaved.filter((l) => l.name !== selectedLink.name);
+        } else if (isValidUrl(trimmed)) {
+          // Actualizar o crear el registro manteniendo solo un elemento por nombre
+          if (exists) {
+            updatedLinks = linksSaved.map((l) =>
+              l.name === selectedLink.name
+                ? { ...l, url: trimmed, enabled: selectedLink.enabled }
+                : l
+            );
+          } else {
+            const nextId = linksSaved.length
+              ? Math.max(...linksSaved.map((l) => l.id)) + 1
+              : 1;
+            updatedLinks = [
+              ...linksSaved,
+              {
+                id: nextId,
+                name: selectedLink.name,
+                url: trimmed,
+                enabled: selectedLink.enabled,
+              },
+            ];
+          }
+        } else {
+          // URL no válida (no vacía): solo desactivar si existe, o crear desactivado si no existe
+          if (exists) {
+            updatedLinks = linksSaved.map((l) =>
+              l.name === selectedLink.name
+                ? { ...l, url: trimmed, enabled: false }
+                : l
+            );
+          } else {
+            const nextId = linksSaved.length
+              ? Math.max(...linksSaved.map((l) => l.id)) + 1
+              : 1;
+            updatedLinks = [
+              ...linksSaved,
+              {
+                id: nextId,
+                name: selectedLink.name,
+                url: trimmed,
+                enabled: false,
+              },
+            ];
+          }
+        }
       }
 
       // Actualiza el preview (ProfileView/DevTree) inmediatamente
@@ -101,7 +151,7 @@ export default function LinkTreeView() {
         oldData
           ? {
               ...oldData,
-              links: JSON.stringify(updatedItem),
+              links: JSON.stringify(updatedLinks),
             }
           : oldData
       );
@@ -137,12 +187,6 @@ export default function LinkTreeView() {
           l.name === selectedLink.name
             ? { ...l, enabled: selectedLink.enabled }
             : l
-        );
-        console.log(
-          "Toggle aplicado:",
-          selectedLink.name,
-          "=>",
-          selectedLink.enabled
         );
       }
 
