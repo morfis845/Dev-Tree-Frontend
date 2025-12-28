@@ -26,7 +26,6 @@ export default function SearchForm() {
     const slug = slugify(handle);
     mutation.mutate(slug);
   };
-  console.log(data);
   return (
     <form onSubmit={handleSubmit(handleSearch)} className="space-y-5">
       <div className="relative flex items-center  bg-white  px-2">
