@@ -66,7 +66,7 @@ export async function getUserByHandler(handle: string) {
 
 export async function searchByHandle(handle: string) {
   try {
-    const { data } = await api.post<String>("/search", { handle });
+    const { data } = await api.post<UpdateUserResponse>("/search", { handle });
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
